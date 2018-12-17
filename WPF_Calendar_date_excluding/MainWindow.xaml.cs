@@ -21,34 +21,29 @@ namespace WPF_Calendar_date_excluding
     /// </summary>
     public partial class MainWindow : Window
     {
-        private static DataTable dates;
-
-
         public MainWindow()
         {
             InitializeComponent();
-            Dates = Dates = new DataTable();
+            Dates = new List<DateTime>();
         }
 
-        public static DataTable Dates { get => dates; set => dates = value; }
+        private static List<DateTime> Dates;
 
-        private void DatePicker_SelectedDateChanged(object sender,
-            SelectionChangedEventArgs e)
+        private void DatePicker_SelectedDateChanged(object sender, SelectionChangedEventArgs e)
         {
-            // ... Get DatePicker reference.
             var picker = sender as DatePicker;
 
-            // ... Get nullable DateTime from SelectedDate.
-            DateTime? date = picker.SelectedDate;
-            if (date == null)
+            if (picker != null)
             {
-                // ... A null object.
-                this.Title = "No date";
-            }
-            else
-            {
-                // ... No need to display the time.
-                this.Title = date.Value.ToShortDateString();
+                DateTime? date = picker.SelectedDate;
+                if (date == null)
+                {
+                    this.Title = "No date";
+                }
+                else
+                {
+                    this.Title = date.Value.ToShortDateString();
+                }
             }
         }
 
@@ -57,6 +52,69 @@ namespace WPF_Calendar_date_excluding
             //MonthlyCalendar.DisplayDate = new DateTime(2018, 3, 5);
             //MonthlyCalendar.DisplayDateStart = new DateTime(2018, 3, 1);
             //MonthlyCalendar.DisplayDateEnd = new DateTime(2018, 3, 31);
+        }
+
+        private List<DateTime> AddDefault()
+        {
+            List<DateTime> defaultDateTimes = new List<DateTime>();
+            defaultDateTimes.Add(new DateTime(2018, 12, 5));
+            defaultDateTimes.Add(new DateTime(2018, 12, 7));
+            defaultDateTimes.Add(new DateTime(2018, 12, 9));
+            defaultDateTimes.Add(new DateTime(2018, 12, 11));
+            defaultDateTimes.Add(new DateTime(2018, 12, 13));
+            defaultDateTimes.Add(new DateTime(2018, 12, 15));
+            defaultDateTimes.Add(new DateTime(2018, 12, 17));
+            defaultDateTimes.Add(new DateTime(2018, 12, 19));
+            defaultDateTimes.Add(new DateTime(2018, 12, 21));
+            defaultDateTimes.Add(new DateTime(2018, 12, 23));
+
+            return defaultDateTimes;
+        }
+
+        private void AddDate(DateTime start, DateTime end)
+        {
+
+        }
+
+        private void AddDate(DateTime oneDay)
+        {
+
+        }
+
+        private void Btn_LoadDefaultData_Click(object sender, RoutedEventArgs e)
+        {
+            foreach (DateTime dateTime in AddDefault())
+            {
+                if(check(dateTime))
+                calendar.BlackoutDates.Add(new CalendarDateRange(dateTime));
+            }
+
+            
+        }
+
+        private bool check(DateTime newDateTime)
+        {
+            foreach (DateTime saveDateTime in Dates)
+            {
+                if (newDateTime == saveDateTime)
+                {
+
+                    return false;
+                }
+            }
+            Dates.Add(newDateTime);
+            return true;
+        }
+
+        private void Btn__AddDate_Click(object sender, RoutedEventArgs e)
+        {
+            //check
+            ////      calendar.
+
+            ////      this.pick_endDate
+            ////      this.pick_startDate
+
+            calendar.BlackoutDates.Add(new CalendarDateRange((DateTime) pick_endDate.SelectedDate, (DateTime) pick_startDate.SelectedDate));
         }
     }
 }
