@@ -21,13 +21,12 @@ namespace WPF_Calendar_date_excluding
     /// </summary>
     public partial class MainWindow : Window
     {
+        private static List<DateTime> Dates;
         public MainWindow()
         {
             InitializeComponent();
             Dates = new List<DateTime>();
         }
-
-        private static List<DateTime> Dates;
 
         private void DatePicker_SelectedDateChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -45,13 +44,6 @@ namespace WPF_Calendar_date_excluding
                     this.Title = date.Value.ToShortDateString();
                 }
             }
-        }
-
-        private void SetDisplayDates()
-        {
-            //MonthlyCalendar.DisplayDate = new DateTime(2018, 3, 5);
-            //MonthlyCalendar.DisplayDateStart = new DateTime(2018, 3, 1);
-            //MonthlyCalendar.DisplayDateEnd = new DateTime(2018, 3, 31);
         }
 
         private List<DateTime> AddDefault()
@@ -85,11 +77,13 @@ namespace WPF_Calendar_date_excluding
         {
             foreach (DateTime dateTime in AddDefault())
             {
-                if(check(dateTime))
-                calendar.BlackoutDates.Add(new CalendarDateRange(dateTime));
-            }
+                if (check(dateTime))
+                {
+                    calendar.BlackoutDates.Add(new CalendarDateRange(dateTime));
+                    Dates.Add(dateTime);
+                }
 
-            
+            }
         }
 
         private bool check(DateTime newDateTime)
@@ -98,23 +92,51 @@ namespace WPF_Calendar_date_excluding
             {
                 if (newDateTime == saveDateTime)
                 {
-
                     return false;
                 }
             }
-            Dates.Add(newDateTime);
-            return true;
-        }
+        return true;
+    }
 
         private void Btn__AddDate_Click(object sender, RoutedEventArgs e)
         {
-            //check
-            ////      calendar.
+            List<DateTime> listOfCorrectDaysToAdd = new List<DateTime>();
+            bool badDay = false;
+            IEnumerable<DateTime> EachCalendarDay(DateTime startDate, DateTime endDate)
+            {
+                for (var date = startDate.Date; date.Date <= endDate.Date; date = date.AddDays(1)) yield
+                    return date;
+            }
 
-            ////      this.pick_endDate
-            ////      this.pick_startDate
+            if (pick_startDate.SelectedDate != null || pick_endDate.SelectedDate != null)
+            {
+                //if ()}
+                foreach (DateTime dayDateTime in EachCalendarDay((DateTime) pick_startDate.SelectedDate,
+                    (DateTime) pick_endDate.SelectedDate))
+                {
+                    if (check(dayDateTime))
+                    {
+                        listOfCorrectDaysToAdd.Add(dayDateTime);
+                    }
+                    else
+                    {
+                        badDay = true;
+                    }
+                }
+            }
+            else
+            {
+                badDay = true;
+            }
 
-            calendar.BlackoutDates.Add(new CalendarDateRange((DateTime) pick_endDate.SelectedDate, (DateTime) pick_startDate.SelectedDate));
+            if (!badDay)
+            {
+                foreach (DateTime d in listOfCorrectDaysToAdd)
+                {
+                    Dates.Add(d);
+                    calendar.BlackoutDates.Add(new CalendarDateRange(d));
+                }
+            }
         }
     }
 }
